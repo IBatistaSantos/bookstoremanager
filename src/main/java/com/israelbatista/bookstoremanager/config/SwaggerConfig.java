@@ -16,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    private static final String BASE_PACKAGE = "com.israelbatista.bookstiremanager";
+    private static final String BASE_PACKAGE = "com.israelbatista.bookstoremanager";
     private static final String TITLE_PROJECT = "Bookstore Manager";
     private static final String DESCRIPTION_PROJECT = "Bookstore Manager API Project";
     private static final String AUTHOR_PROJECT = "Israel Batista";
@@ -42,5 +42,4 @@ public class SwaggerConfig {
                 .contact(new Contact(AUTHOR_PROJECT, GITHUB_PROJECT, EMAIL_AUTHOR))
                 .build();
     }
-
 }
