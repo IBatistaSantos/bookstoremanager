@@ -1,6 +1,7 @@
 package com.israelbatista.bookstoremanager.books.entity;
 
 import com.israelbatista.bookstoremanager.author.entity.Author;
+import com.israelbatista.bookstoremanager.entity.Auditable;
 import com.israelbatista.bookstoremanager.publishers.entity.Publisher;
 import com.israelbatista.bookstoremanager.users.entity.User;
 import com.israelbatista.bookstoremanager.users.enums.Gender;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-public class Book {
+public class Book extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
