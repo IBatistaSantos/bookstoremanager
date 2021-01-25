@@ -9,7 +9,7 @@ A few sentences describing the overall goals of the pull request's commits.
 - [ ] Documentation
 
 ## Deploy Notes
-Notes regarding deployment the contained body of work. These should note  db migrations, etc.
+Notes regarding deployment the contained body of work. These should note any note  db migrations, etc.
 
 ## Steps to Test or Reproduce
 Outline the steps to test or reproduce the PR here
