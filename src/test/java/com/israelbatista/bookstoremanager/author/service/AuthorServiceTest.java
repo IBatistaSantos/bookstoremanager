@@ -5,8 +5,10 @@ import com.israelbatista.bookstoremanager.author.builder.AuthorDTOBuilder;
 import com.israelbatista.bookstoremanager.author.dto.AuthorDTO;
 import com.israelbatista.bookstoremanager.author.entity.Author;
 import com.israelbatista.bookstoremanager.author.exception.AuthorAlreadyExistsException;
+import com.israelbatista.bookstoremanager.author.exception.AuthorNotFoundException;
 import com.israelbatista.bookstoremanager.author.mapper.AuthorMapper;
 import com.israelbatista.bookstoremanager.author.repository.AuthorRepository;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
@@ -75,5 +77,30 @@ public class AuthorServiceTest {
 
         assertThrows(AuthorAlreadyExistsException.class,
                 () -> authorService.create(expectedAuthorToCreateDTO));
+    }
+
+    @Test
+    void whenValidIdIsGivenThenAnAuthorShouldBeReturned() {
+        AuthorDTO expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+        Author expectedFoundAuthor = authorMapper.toModel(expectedFoundAuthorDTO);
+
+        when(authorRepository.findById(expectedFoundAuthorDTO.getId()))
+                .thenReturn(Optional.of(expectedFoundAuthor));
+
+        AuthorDTO authorDTO = authorService.findById(expectedFoundAuthorDTO.getId());
+
+        assertThat(authorDTO, is(CoreMatchers.equalTo(expectedFoundAuthorDTO)));
+
+    }
+
+    @Test
+    void whenInvalidIdIsGivenThenAnAuthorShouldBeReturned() {
+        AuthorDTO expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+
+        when(authorRepository.findById(expectedFoundAuthorDTO.getId()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(AuthorNotFoundException.class,
+                () ->  authorService.findById(expectedFoundAuthorDTO.getId()));
     }
 }
