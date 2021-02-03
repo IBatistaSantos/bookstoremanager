@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Api("Authors Management")
 public interface AuthorControllerDocs {
 
@@ -25,5 +27,11 @@ public interface AuthorControllerDocs {
             @ApiResponse(code = 404, message = "Author not found error code")
     })
     AuthorDTO findById(@PathVariable Long id);
+
+    @ApiOperation(value = "List All registered authors")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Return all registered authors")
+    })
+    List<AuthorDTO> findAll();
 
 }

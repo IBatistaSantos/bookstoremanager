@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import java.util.Collections;
+
 import static com.israelbatista.bookstoremanager.utils.JsonConversionUtils.asJsonString;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
@@ -97,5 +99,26 @@ public class AuthorControllerTest {
                 .andExpect(jsonPath("$.age",
                         is(expectedFoundAuthorDTO.getAge())));
     }
+
+    @Test
+    void whenGETListIsCalledThenStatusOkShouldBeReturned() throws Exception {
+        AuthorDTO expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+
+        when(authorService.findAll())
+                .thenReturn(Collections.singletonList(expectedFoundAuthorDTO));
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get(AUTHOR_API_URL_PATH)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id",
+                        is(expectedFoundAuthorDTO.getId().intValue())))
+                .andExpect(jsonPath("$[0].name",
+                        is(expectedFoundAuthorDTO.getName())))
+                .andExpect(jsonPath("$[0].age",
+                        is(expectedFoundAuthorDTO.getAge())));
+    }
+
+
 
 }

@@ -8,25 +8,23 @@ import com.israelbatista.bookstoremanager.author.exception.AuthorAlreadyExistsEx
 import com.israelbatista.bookstoremanager.author.exception.AuthorNotFoundException;
 import com.israelbatista.bookstoremanager.author.mapper.AuthorMapper;
 import com.israelbatista.bookstoremanager.author.repository.AuthorRepository;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.core.Is.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthorServiceTest {
@@ -89,7 +87,7 @@ public class AuthorServiceTest {
 
         AuthorDTO authorDTO = authorService.findById(expectedFoundAuthorDTO.getId());
 
-        assertThat(authorDTO, is(CoreMatchers.equalTo(expectedFoundAuthorDTO)));
+        assertThat(authorDTO, is(equalTo(expectedFoundAuthorDTO)));
 
     }
 
@@ -102,5 +100,28 @@ public class AuthorServiceTest {
 
         assertThrows(AuthorNotFoundException.class,
                 () ->  authorService.findById(expectedFoundAuthorDTO.getId()));
+    }
+
+    @Test
+    void whenListAuthorsIsCalledThenItShouldBeReturned() {
+        AuthorDTO expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+        Author expectedFoundAuthor = authorMapper.toModel(expectedFoundAuthorDTO);
+
+
+        when(authorRepository.findAll())
+                .thenReturn(Collections.singletonList(expectedFoundAuthor));
+
+        List<AuthorDTO> authorDTOList = authorService.findAll();
+        assertThat(authorDTOList.size(), is(1));
+        assertThat(authorDTOList.get(0), is(equalTo(expectedFoundAuthorDTO)));
+    }
+
+    @Test
+    void whenListAuthorsIsCalledThenAnEmptyListShouldBeReturned() {
+        when(authorRepository.findAll())
+                .thenReturn(Collections.EMPTY_LIST);
+
+        List<AuthorDTO> authorDTOList = authorService.findAll();
+        assertThat(authorDTOList.size(), is(0));
     }
 }
