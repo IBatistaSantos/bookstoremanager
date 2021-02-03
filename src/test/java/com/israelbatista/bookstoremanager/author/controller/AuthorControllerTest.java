@@ -118,7 +118,4 @@ public class AuthorControllerTest {
                 .andExpect(jsonPath("$[0].age",
                         is(expectedFoundAuthorDTO.getAge())));
     }
-
-
-
 }
