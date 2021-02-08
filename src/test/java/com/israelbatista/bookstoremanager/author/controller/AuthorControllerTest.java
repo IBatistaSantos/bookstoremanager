@@ -108,7 +108,6 @@ public class AuthorControllerTest {
         when(authorService.findAll())
                 .thenReturn(Collections.singletonList(expectedFoundAuthorDTO));
 
-
         mockMvc.perform(MockMvcRequestBuilders.get(AUTHOR_API_URL_PATH)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -123,7 +122,7 @@ public class AuthorControllerTest {
     @Test
     void whenDeleteWithValidIdIsCalledThenNoContentShouldBeReturned() throws Exception {
         AuthorDTO expectedAuthorDeletedDTO = authorDTOBuilder.buildAuthorDTO();
-        var expectedAuthorDeletedId =   expectedAuthorDeletedDTO.getId();
+        var expectedAuthorDeletedId = expectedAuthorDeletedDTO.getId();
 
         doNothing().when(authorService).delete(expectedAuthorDeletedId);
 
