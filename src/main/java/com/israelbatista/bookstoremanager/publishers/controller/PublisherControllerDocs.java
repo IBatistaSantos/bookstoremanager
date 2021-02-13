@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Api("Publishers Management")
 public interface PublisherControllerDocs {
@@ -17,4 +18,10 @@ public interface PublisherControllerDocs {
     })
     PublisherDTO create(PublisherDTO publisherDTO);
 
+    @ApiOperation(value = "Find publisher by id operation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success publisher found"),
+            @ApiResponse(code = 404, message = "Publisher not found error")
+    })
+    PublisherDTO findById(@PathVariable Long id);
 }

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/api/v1/publishers")
@@ -24,5 +25,10 @@ public class PublisherController implements PublisherControllerDocs {
     @ResponseStatus(HttpStatus.CREATED)
     public PublisherDTO create(@RequestBody @Valid PublisherDTO publisherDTO) {
         return publisherService.create(publisherDTO);
+    }
+
+    @GetMapping("/{id}")
+    public PublisherDTO findById(@PathVariable Long id) {
+        return publisherService.findById(id);
     }
 }

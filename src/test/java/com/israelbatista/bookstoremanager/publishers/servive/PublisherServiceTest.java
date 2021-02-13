@@ -1,5 +1,6 @@
 package com.israelbatista.bookstoremanager.publishers.servive;
 
+import com.israelbatista.bookstoremanager.author.exception.PublisherNotFoundException;
 import com.israelbatista.bookstoremanager.publishers.builder.PublisherDTOBuilder;
 import com.israelbatista.bookstoremanager.publishers.dto.PublisherDTO;
 import com.israelbatista.bookstoremanager.publishers.entity.Publisher;
@@ -73,5 +74,28 @@ public class PublisherServiceTest {
 
         assertThrows(PublisherAlreadyExistsException.class,
                 () -> publisherService.create(expectedPublisherToCreateDTO));
+    }
+
+    @Test
+    void whenValidIdIsGivenThenAPublisherShouldReturned() {
+        PublisherDTO expectedPublisherFoundDTO = publisherDTOBuilder.buildPublisherDTO();
+        Publisher expectedPublisherFound = publisherMapper.toModel(expectedPublisherFoundDTO);
+
+        when(publisherRepository.findById(expectedPublisherFoundDTO.getId()))
+                .thenReturn(Optional.of(expectedPublisherFound));
+
+        PublisherDTO foundPublisherDTO = publisherService.findById(expectedPublisherFoundDTO.getId());
+        assertThat(foundPublisherDTO, is(equalTo(foundPublisherDTO)));
+    }
+
+    @Test
+    void whenInvalidIdIsGivenThenExceptionShouldThrown() {
+        PublisherDTO expectedPublisherFoundDTO = publisherDTOBuilder.buildPublisherDTO();
+
+        when(publisherRepository.findById(expectedPublisherFoundDTO.getId()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(PublisherNotFoundException.class,
+                () -> publisherService.findById(expectedPublisherFoundDTO.getId()));
     }
 }
