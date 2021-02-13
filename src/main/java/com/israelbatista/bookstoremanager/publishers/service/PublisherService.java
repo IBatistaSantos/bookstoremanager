@@ -1,6 +1,7 @@
 package com.israelbatista.bookstoremanager.publishers.service;
 
 
+import com.israelbatista.bookstoremanager.author.exception.PublisherNotFoundException;
 import com.israelbatista.bookstoremanager.publishers.dto.PublisherDTO;
 import com.israelbatista.bookstoremanager.publishers.entity.Publisher;
 import com.israelbatista.bookstoremanager.publishers.expection.PublisherAlreadyExistsException;
@@ -29,6 +30,12 @@ public class PublisherService {
         Publisher publisherToCreate = publisherMapper.toModel(publisherDTO);
         Publisher publisher = publisherRepository.save(publisherToCreate);
         return publisherMapper.toDTO(publisher);
+    }
+
+    public PublisherDTO findById(Long id) {
+        return publisherRepository.findById(id)
+                .map(publisherMapper::toDTO)
+                .orElseThrow(() -> new PublisherNotFoundException(id));
     }
 
     private void verifyIfExists(String name, String code) {
