@@ -47,6 +47,11 @@ public class PublisherService {
                 .orElseThrow(() -> new PublisherNotFoundException(id));
     }
 
+    public void delete(Long id) {
+        verifyIfExists(id);
+        publisherRepository.deleteById(id);
+    }
+
     private void verifyIfExists(String name, String code) {
         Optional<Publisher> duplicatedPublisher = publisherRepository.findByNameOrCode(name, code);
 
@@ -54,4 +59,10 @@ public class PublisherService {
             throw new PublisherAlreadyExistsException(name, code);
         }
     }
+
+    private void verifyIfExists(Long id) {
+        publisherRepository.findById(id)
+                .orElseThrow(() -> new PublisherNotFoundException(id));
+    }
+
 }
