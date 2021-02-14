@@ -21,7 +21,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import java.util.Collections;
+
 import static com.israelbatista.bookstoremanager.utils.JsonConversionUtils.*;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -57,9 +60,9 @@ public class PublisherControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(expectedCreatedPublisherDTO)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(expectedCreatedPublisherDTO.getId().intValue())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(expectedCreatedPublisherDTO.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(expectedCreatedPublisherDTO.getCode())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(expectedCreatedPublisherDTO.getId().intValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", is(expectedCreatedPublisherDTO.getName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", is(expectedCreatedPublisherDTO.getCode())));
     }
 
     @Test
@@ -81,9 +84,25 @@ public class PublisherControllerTest {
         mockMvc.perform(get(PUBLISHERS_API_URL_PATH + "/" + expectedCreatedPublisherDTO.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(expectedCreatedPublisherDTO.getId().intValue())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(expectedCreatedPublisherDTO.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(expectedCreatedPublisherDTO.getCode())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(expectedCreatedPublisherDTO.getId().intValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", is(expectedCreatedPublisherDTO.getName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", is(expectedCreatedPublisherDTO.getCode())));
     }
+
+    @Test
+    void whenGETListAllIsCalledThenOkShouldBeInformed() throws Exception {
+        PublisherDTO expectedCreatedPublisherDTO = publisherDTOBuilder.buildPublisherDTO();
+
+        when(publisherService.findAll()).thenReturn(Collections.singletonList(expectedCreatedPublisherDTO));
+
+        mockMvc.perform(get(PUBLISHERS_API_URL_PATH)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", is(expectedCreatedPublisherDTO.getId().intValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", is(expectedCreatedPublisherDTO.getName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].code", is(expectedCreatedPublisherDTO.getCode())));
+    }
+
+
 
 }
