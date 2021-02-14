@@ -10,7 +10,9 @@ import com.israelbatista.bookstoremanager.publishers.repository.PublisherReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PublisherService {
@@ -30,6 +32,13 @@ public class PublisherService {
         Publisher publisherToCreate = publisherMapper.toModel(publisherDTO);
         Publisher publisher = publisherRepository.save(publisherToCreate);
         return publisherMapper.toDTO(publisher);
+    }
+
+    public List<PublisherDTO> findAll() {
+        return publisherRepository.findAll()
+                .stream()
+                .map(publisherMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public PublisherDTO findById(Long id) {
