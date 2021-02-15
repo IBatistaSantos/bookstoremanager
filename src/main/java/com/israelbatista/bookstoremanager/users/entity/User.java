@@ -40,9 +40,6 @@ public class User extends Auditable {
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDate birthDate;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    private LocalDate foundationDate;
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Book> books;
 }
