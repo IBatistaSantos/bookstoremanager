@@ -24,7 +24,7 @@ public class UserDTO {
     @Size(max = 255)
     private String name;
 
-    @NotEmpty
+    @NotNull
     @Max(120)
     private Integer age;
 
