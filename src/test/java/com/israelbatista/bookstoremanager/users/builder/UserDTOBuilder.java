@@ -16,7 +16,7 @@ public class UserDTOBuilder {
     private String name = "Israel Batista";
 
     @Builder.Default
-    private Integer age = 23;
+    private int age = 23;
 
     @Builder.Default
     private Gender gender = Gender.MALE;
