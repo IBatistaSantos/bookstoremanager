@@ -6,6 +6,7 @@ import com.israelbatista.bookstoremanager.users.dto.MessageDTO;
 import com.israelbatista.bookstoremanager.users.dto.UserDTO;
 import com.israelbatista.bookstoremanager.users.entity.User;
 import com.israelbatista.bookstoremanager.users.exception.UserAlreadyExistsException;
+import com.israelbatista.bookstoremanager.users.exception.UserNotFoundException;
 import com.israelbatista.bookstoremanager.users.mapper.UserMapper;
 import com.israelbatista.bookstoremanager.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -73,5 +74,25 @@ public class UserServiceTest {
 
         assertThrows(UserAlreadyExistsException.class, () -> userService.create(expectedDuplicatedUserDTO));
 
+    }
+
+    @Test
+    void whenValidUserIsInformedThenItShouldBeDeleted() {
+        UserDTO expectedDeletedUserDTO = userDTOBuilder.buildUserDTO();
+        User expectedDeletedUser = userMapper.toModel(expectedDeletedUserDTO);
+
+        when(userRepository.findById(expectedDeletedUserDTO.getId())).thenReturn(Optional.of(expectedDeletedUser));
+        doNothing().when(userRepository).deleteById(expectedDeletedUserDTO.getId());
+
+        userService.delete(expectedDeletedUserDTO.getId());
+
+        verify(userRepository, times(1)).deleteById(expectedDeletedUserDTO.getId());
+    }
+
+    @Test
+    void whenInvalidUserIdIsInformedThenAnExceptionItShouldBeThrown() {
+        UserDTO expectedDeletedUserDTO = userDTOBuilder.buildUserDTO();
+        when(userRepository.findById(expectedDeletedUserDTO.getId())).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> userService.delete(expectedDeletedUserDTO.getId()));
     }
 }

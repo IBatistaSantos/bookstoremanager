@@ -4,6 +4,7 @@ import com.israelbatista.bookstoremanager.users.dto.MessageDTO;
 import com.israelbatista.bookstoremanager.users.dto.UserDTO;
 import com.israelbatista.bookstoremanager.users.entity.User;
 import com.israelbatista.bookstoremanager.users.exception.UserAlreadyExistsException;
+import com.israelbatista.bookstoremanager.users.exception.UserNotFoundException;
 import com.israelbatista.bookstoremanager.users.mapper.UserMapper;
 import com.israelbatista.bookstoremanager.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,15 @@ public class UserService {
         return MessageDTO.builder()
                 .message(String.format("User %s successfully created", createdUser.getUsername()))
                 .build();
+    }
+
+    public void delete(Long id) {
+        verifyIfExists(id);
+        userRepository.deleteById(id);
+    }
+
+    private void verifyIfExists(Long id) {
+        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     private void verifyExists(String email, String username) {
