@@ -35,13 +35,27 @@ public class UserService {
                 .build();
     }
 
+    public MessageDTO update(Long id, UserDTO userToUpdateDTO) {
+        User foundUser = verifyAndGetIfExists(id);
+        userToUpdateDTO.setId(foundUser.getId());
+
+
+        User userToUpdate = userMapper.toModel(userToUpdateDTO);
+        User updateUser = userRepository.save(userToUpdate);
+
+        return MessageDTO.builder()
+                .message(String.format("User %s successfully updated", updateUser.getUsername()))
+                .build();
+    }
+
     public void delete(Long id) {
-        verifyIfExists(id);
+        verifyAndGetIfExists(id);
         userRepository.deleteById(id);
     }
 
-    private void verifyIfExists(Long id) {
-        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    private User verifyAndGetIfExists(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     private void verifyExists(String email, String username) {
