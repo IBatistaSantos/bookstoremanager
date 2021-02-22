@@ -19,8 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -94,5 +93,33 @@ public class UserServiceTest {
         UserDTO expectedDeletedUserDTO = userDTOBuilder.buildUserDTO();
         when(userRepository.findById(expectedDeletedUserDTO.getId())).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, () -> userService.delete(expectedDeletedUserDTO.getId()));
+    }
+
+    @Test
+    void whenExistingUserIsInformedThenItShouldBeUpdated() {
+        UserDTO expectedUpdatedUserDTO = userDTOBuilder.buildUserDTO();
+        expectedUpdatedUserDTO.setUsername("israelupdate");
+        User expectedUpdatedUser = userMapper.toModel(expectedUpdatedUserDTO);
+
+        String expectedCreationMessage = "User israelupdate successfully updated";
+
+        when(userRepository.findById(expectedUpdatedUserDTO.getId())).thenReturn(Optional.of(expectedUpdatedUser));
+        when(userRepository.save(expectedUpdatedUser)).thenReturn(expectedUpdatedUser);
+
+        MessageDTO successUpdatedMessage = userService.update(expectedUpdatedUser.getId(), expectedUpdatedUserDTO);
+
+        assertThat(successUpdatedMessage.getMessage(), is(equalToObject(expectedCreationMessage)));
+    }
+
+    @Test
+    void whenNotExistingUserIsInformedThenAnExceptionShouldBeThrown() {
+        UserDTO expectedUpdatedUserDTO = userDTOBuilder.buildUserDTO();
+        expectedUpdatedUserDTO.setUsername("israelupdate");
+        User expectedUpdatedUser = userMapper.toModel(expectedUpdatedUserDTO);
+
+        when(userRepository.findById(expectedUpdatedUserDTO.getId())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class,
+                () -> userService.update(expectedUpdatedUser.getId(), expectedUpdatedUserDTO));
     }
 }
