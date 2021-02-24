@@ -2,6 +2,7 @@ package com.israelbatista.bookstoremanager.users.builder;
 
 import com.israelbatista.bookstoremanager.users.dto.UserDTO;
 import com.israelbatista.bookstoremanager.users.enums.Gender;
+import com.israelbatista.bookstoremanager.users.enums.Role;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -34,7 +35,10 @@ public class UserDTOBuilder {
     @Builder.Default
     private LocalDate birthDate = LocalDate.of(1997, 6,23);
 
+    @Builder.Default
+    private Role role = Role.USER;
+
     public UserDTO buildUserDTO() {
-        return new UserDTO(id, name, age, gender, email, username, password, birthDate);
+        return new UserDTO(id, name, age, gender, email, username, password, birthDate, role);
     }
 }
