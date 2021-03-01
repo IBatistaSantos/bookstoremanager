@@ -18,3 +18,7 @@ logging:
     br:
       com:
         israelbatista: DEBUG
+
+jwt:
+  secret: bookstoremanager
+  validity: 18000
