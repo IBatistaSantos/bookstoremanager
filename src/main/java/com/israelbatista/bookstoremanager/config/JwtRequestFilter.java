@@ -24,7 +24,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private AuthenticationService authenticationService;
 
     @Autowired
-    private JwtTokenManger jwtTokenManger;
+    private JwtTokenManger jwtTokenManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -36,7 +36,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         var requestTokenHeader = request.getHeader("Authorization");
         if (isTokenPresent(requestTokenHeader)) {
             jwtToken = requestTokenHeader.substring(7);
-            username = jwtTokenManger.getUsernameFromToken(jwtToken);
+            username = jwtTokenManager.getUsernameFromToken(jwtToken);
         } else {
             logger.warn("JWT Token does not begin with Bearer String");
         }
@@ -58,7 +58,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private void addUsernameInContext(HttpServletRequest request, String username, String jwtToken) {
         UserDetails userDetails = authenticationService.loadUserByUsername(username);
-        if (jwtTokenManger.validateToken(jwtToken, userDetails)) {
+        if (jwtTokenManager.validateToken(jwtToken, userDetails)) {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(userDetails,
                             null, userDetails.getAuthorities());

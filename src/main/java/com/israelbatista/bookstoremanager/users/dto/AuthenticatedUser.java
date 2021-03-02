@@ -20,8 +20,8 @@ public class AuthenticatedUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(ROLE_PREFIX + role));
-    }
+        return Collections.singletonList(new SimpleGrantedAuthority(ROLE_PREFIX + role));
+     }
 
     @Override
     public String getPassword() {
