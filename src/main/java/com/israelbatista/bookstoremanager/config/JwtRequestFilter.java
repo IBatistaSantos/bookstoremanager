@@ -52,7 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isUsernameInContext(String username) {
-        return username != null &&
+        return !username.isEmpty() &&
                 SecurityContextHolder.getContext().getAuthentication() == null;
     }
 
