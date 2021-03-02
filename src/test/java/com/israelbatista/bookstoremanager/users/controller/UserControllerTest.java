@@ -1,9 +1,13 @@
 package com.israelbatista.bookstoremanager.users.controller;
 
 
+import com.israelbatista.bookstoremanager.users.builder.JwtRequestBuilder;
 import com.israelbatista.bookstoremanager.users.builder.UserDTOBuilder;
+import com.israelbatista.bookstoremanager.users.dto.JwtRequest;
+import com.israelbatista.bookstoremanager.users.dto.JwtResponse;
 import com.israelbatista.bookstoremanager.users.dto.MessageDTO;
 import com.israelbatista.bookstoremanager.users.dto.UserDTO;
+import com.israelbatista.bookstoremanager.users.service.AuthenticationService;
 import com.israelbatista.bookstoremanager.users.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +38,11 @@ public class UserControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private AuthenticationService authenticationService;
+
+    private JwtRequestBuilder jwtRequestBuilder;
+
     @InjectMocks
     private UserController userController;
 
@@ -42,6 +51,7 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
         userDTOBuilder = UserDTOBuilder.builder().build();
+        jwtRequestBuilder = JwtRequestBuilder.builder().build();
         mockMvc = MockMvcBuilders.standaloneSetup(userController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .setViewResolvers((s, locale) -> new MappingJackson2JsonView())
@@ -101,6 +111,32 @@ public class UserControllerTest {
                 .content(asJsonString(expectedUserToUpdateDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", is(expectedUpdateMessage)));
+    }
+
+    @Test
+    void whenPOSTIsCalledToAuthenticateUserThenOkShouldBeReturned() throws Exception {
+        JwtRequest jwtRequest = jwtRequestBuilder.builderJwtRequest();
+        JwtResponse expectedJwtToken = JwtResponse.builder().jwtToken("fakeToken").build();
+
+        when(authenticationService.createAuthenticationToken(jwtRequest)).thenReturn(expectedJwtToken);
+
+        mockMvc.perform(post(USERS_API_URI + "/authenticate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(jwtRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jwtToken", is(expectedJwtToken.getJwtToken())));
+    }
+
+    @Test
+    void whenPOSTIsCalledToAuthenticateUserWithoutPasswordThenBadRequestShouldBeReturned() throws Exception {
+        JwtRequest jwtRequest = jwtRequestBuilder.builderJwtRequest();
+        jwtRequest.setPassword(null);
+
+
+        mockMvc.perform(post(USERS_API_URI + "/authenticate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(jwtRequest)))
+                .andExpect(status().isBadRequest());
     }
 }
 
