@@ -14,11 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class JwtTokenManger {
+public class JwtTokenManager {
     private Long jwtTokenValidity;
     private String secret;
 
-    public JwtTokenManger(@Value("${jwt.validity}") Long jwtTokenValidity,
+    public JwtTokenManager(@Value("${jwt.validity}") Long jwtTokenValidity,
                           @Value("${jwt.secret}") String secret) {
         this.jwtTokenValidity = jwtTokenValidity;
         this.secret = secret;
@@ -34,7 +34,7 @@ public class JwtTokenManger {
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtTokenValidity * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret.getBytes(StandardCharsets.UTF_8))
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
 
@@ -50,7 +50,7 @@ public class JwtTokenManger {
 
     private Claims getAllClaimsForToken(String token) {
         return Jwts.parser()
-                .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
+                .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody();
     }

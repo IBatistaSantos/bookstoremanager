@@ -42,7 +42,7 @@ public class AuthenticationServiceTest {
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private JwtTokenManger jwtTokenManger;
+    private JwtTokenManager jwtTokenManager;
 
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -67,7 +67,7 @@ public class AuthenticationServiceTest {
         String expectedGeneratedToken = "fakeToken";
 
         when(userRepository.findByUsername(jwtRequest.getUsername())).thenReturn(Optional.of(expectedFoundUser));
-        when(jwtTokenManger.generateToken(any(UserDetails.class))).thenReturn(expectedGeneratedToken);
+        when(jwtTokenManager.generateToken(any(UserDetails.class))).thenReturn(expectedGeneratedToken);
 
         JwtResponse generatedTokenResponse = authenticationService.createAuthenticationToken(jwtRequest);
 

@@ -2,7 +2,7 @@ package com.israelbatista.bookstoremanager.config;
 
 
 import com.israelbatista.bookstoremanager.users.service.AuthenticationService;
-import com.israelbatista.bookstoremanager.users.service.JwtTokenManger;
+import com.israelbatista.bookstoremanager.users.service.JwtTokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +24,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private AuthenticationService authenticationService;
 
     @Autowired
-    private JwtTokenManger jwtTokenManager;
+    private JwtTokenManager jwtTokenManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

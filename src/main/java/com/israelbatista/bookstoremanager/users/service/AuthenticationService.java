@@ -24,14 +24,14 @@ public class AuthenticationService implements UserDetailsService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtTokenManger jwtTokenManger;
+    private JwtTokenManager jwtTokenManager;
 
     public JwtResponse createAuthenticationToken(JwtRequest jwtRequest) {
         String username = jwtRequest.getUsername();
         authenticate(username, jwtRequest.getPassword());
 
         UserDetails userDetails = this.loadUserByUsername(username);
-        String token = jwtTokenManger.generateToken(userDetails);
+        String token = jwtTokenManager.generateToken(userDetails);
 
         return JwtResponse.builder()
                 .jwtToken(token)
