@@ -25,15 +25,15 @@ public class BookRequestDTO {
 
     @NotEmpty
     @ISBN
-    private int isbn;
+    private String isbn;
 
     @NotEmpty
     @Max(3000)
-    private Long pages;
+    private Integer pages;
 
     @NotEmpty
     @Max(3000)
-    private Long chapters;
+    private Integer chapters;
 
     @NotNull
     private Long authorId;
