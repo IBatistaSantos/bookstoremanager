@@ -22,9 +22,8 @@ public class Book extends Auditable {
     @Column(nullable = false, length = 100)
     private String name;
 
-
     @Column(nullable = false)
-    private int isbn;
+    private String isbn;
 
     @Column(columnDefinition = "integer default 0")
     private int pages;

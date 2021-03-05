@@ -1,18 +1,38 @@
 package com.israelbatista.bookstoremanager.book.service;
 
+import com.israelbatista.bookstoremanager.author.entity.Author;
 import com.israelbatista.bookstoremanager.author.service.AuthorService;
 import com.israelbatista.bookstoremanager.book.builder.BookRequestDTOBuilder;
 import com.israelbatista.bookstoremanager.book.builder.BookResponseDTOBuilder;
+import com.israelbatista.bookstoremanager.books.dto.BookRequestDTO;
+import com.israelbatista.bookstoremanager.books.dto.BookResponseDTO;
+import com.israelbatista.bookstoremanager.books.entity.Book;
+import com.israelbatista.bookstoremanager.books.exception.BookAlreadyExistsException;
 import com.israelbatista.bookstoremanager.books.mapper.BookMapper;
 import com.israelbatista.bookstoremanager.books.repository.BookRepository;
 import com.israelbatista.bookstoremanager.books.service.BookService;
+import com.israelbatista.bookstoremanager.publishers.entity.Publisher;
+import com.israelbatista.bookstoremanager.publishers.service.PublisherService;
 import com.israelbatista.bookstoremanager.users.dto.AuthenticatedUser;
+import com.israelbatista.bookstoremanager.users.entity.User;
 import com.israelbatista.bookstoremanager.users.service.UserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
@@ -27,6 +47,9 @@ public class BookServiceTest {
 
     @Mock
     private AuthorService authorService;
+
+    @Mock
+    private PublisherService publisherService;
 
     @InjectMocks
     private BookService bookService;
@@ -49,5 +72,42 @@ public class BookServiceTest {
 
     }
 
+    @Test
+    void whenNewBookIsInformedThenIrShouldBeCreated() {
+        BookRequestDTO expectedBookToCreateDTO = bookRequestDTOBuilder.buildRequestBookDTO();
+        BookResponseDTO expectedCreatedBookDTO = bookResponseDTOBuilder.buildRequestBookDTO();
+        Book expectedCreatedBook = bookMapper.toModel(expectedCreatedBookDTO);
 
+        when(userService.verifyAndGetUserIfExists(authenticatedUser.getUsername())).thenReturn(new User());
+        when(bookRepository.findByNameAndIsbnAndUser(
+                eq(expectedBookToCreateDTO.getName()),
+                eq(expectedBookToCreateDTO.getIsbn()),
+                any(User.class))).thenReturn(Optional.empty());
+
+        when(authorService.verifyAndGetIfExists(expectedBookToCreateDTO.getAuthorId())).thenReturn(new Author());
+        when(publisherService.verifyAndGetIfExists(expectedBookToCreateDTO.getPublisherId())).thenReturn(new Publisher());
+        when(bookRepository.save(any(Book.class))).thenReturn(expectedCreatedBook);
+
+
+        BookResponseDTO createdBookResponseDTO = bookService.create(authenticatedUser, expectedBookToCreateDTO);
+
+        assertThat(createdBookResponseDTO, is(equalTo(expectedCreatedBookDTO)));
+
+    }
+
+    @Test
+    void whenExistingBookIsInformedToCreateThenAnExceptionShouldBeThrown() {
+        BookRequestDTO expectedBookToCreateDTO = bookRequestDTOBuilder.buildRequestBookDTO();
+        BookResponseDTO expectedCreatedBookDTO = bookResponseDTOBuilder.buildRequestBookDTO();
+        Book expectedDuplicatedBook = bookMapper.toModel(expectedCreatedBookDTO);
+
+        when(userService.verifyAndGetUserIfExists(authenticatedUser.getUsername())).thenReturn(new User());
+        when(bookRepository.findByNameAndIsbnAndUser(
+                eq(expectedBookToCreateDTO.getName()),
+                eq(expectedBookToCreateDTO.getIsbn()),
+                any(User.class))).thenReturn(Optional.of(expectedDuplicatedBook));
+
+        assertThrows(BookAlreadyExistsException.class,
+                () -> bookService.create(authenticatedUser, expectedBookToCreateDTO));
+    }
 }
