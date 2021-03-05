@@ -70,4 +70,9 @@ public class UserService {
             throw new UserAlreadyExistsException(email, username);
         }
     }
+
+    public User verifyAndGetUserIfExists(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+    }
 }

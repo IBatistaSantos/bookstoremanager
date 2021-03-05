@@ -11,12 +11,9 @@ public interface BookMapper {
 
     BookMapper INSTANCE = Mappers.getMapper(BookMapper.class);
 
-    Book toModel(BookRequestDTO bookDTO);
+    Book toModel(BookRequestDTO bookRequestDTO);
 
-    BookRequestDTO toModel(BookResponseDTO book);
+    Book toModel(BookResponseDTO bookResponseDTO);
 
     BookResponseDTO toDTO(Book book);
-
-
-
 }

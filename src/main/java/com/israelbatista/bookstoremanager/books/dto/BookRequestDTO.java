@@ -27,11 +27,11 @@ public class BookRequestDTO {
     @ISBN
     private String isbn;
 
-    @NotEmpty
+    @NotNull
     @Max(3000)
     private Integer pages;
 
-    @NotEmpty
+    @NotNull
     @Max(3000)
     private Integer chapters;
 
