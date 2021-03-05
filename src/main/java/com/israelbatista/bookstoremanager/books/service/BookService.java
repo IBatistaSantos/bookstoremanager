@@ -6,6 +6,7 @@ import com.israelbatista.bookstoremanager.books.dto.BookRequestDTO;
 import com.israelbatista.bookstoremanager.books.dto.BookResponseDTO;
 import com.israelbatista.bookstoremanager.books.entity.Book;
 import com.israelbatista.bookstoremanager.books.exception.BookAlreadyExistsException;
+import com.israelbatista.bookstoremanager.books.exception.BookNotFoundException;
 import com.israelbatista.bookstoremanager.books.mapper.BookMapper;
 import com.israelbatista.bookstoremanager.books.repository.BookRepository;
 import com.israelbatista.bookstoremanager.publishers.entity.Publisher;
@@ -48,6 +49,13 @@ public class BookService {
 
         return bookMapper.toDTO(savedBook);
 
+    }
+
+    public BookResponseDTO findByIdAndUser(AuthenticatedUser authenticatedUser, Long bookId) {
+        User foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
+        return bookRepository.findByIdAndUser(bookId, foundAuthenticatedUser)
+                .map(bookMapper::toDTO)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
     }
 
     private void verifyIfBookIsAlreadyRegistered(String name, String isbn, User foundUser) {
