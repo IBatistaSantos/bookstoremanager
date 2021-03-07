@@ -17,6 +17,7 @@ import com.israelbatista.bookstoremanager.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,6 +67,18 @@ public class BookService {
         return bookRepository.findAllByUser(foundAuthenticatedUser).stream()
                 .map(bookMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteByIdAndUser(AuthenticatedUser authenticatedUser, Long bookId) {
+        User foundAuthenticatedUser = userService.verifyAndGetUserIfExists(authenticatedUser.getUsername());
+        Book bookToDelete = verifyAndGetIfExists(bookId, foundAuthenticatedUser);
+        bookRepository.deleteByIdAndUser(bookToDelete.getId(), foundAuthenticatedUser);
+    }
+
+    private Book verifyAndGetIfExists(Long bookId, User foundAuthenticatedUser) {
+        return bookRepository.findByIdAndUser(bookId, foundAuthenticatedUser)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
     }
 
     private void verifyIfBookIsAlreadyRegistered(String name, String isbn, User foundUser) {
