@@ -1,3 +1,6 @@
+[![Build Status](https://www.travis-ci.com/IBatistaSantos/bookstoremanager.svg?branch=master)](https://www.travis-ci.com/IBatistaSantos/bookstoremanager)
+
+
 <h2>Bookstore API Manager</h2>
 
 O objetivo do projeto Bookstore API Manager é disponibilizar uma API para cadastro dos livros de uma livraria através de uma API REST.
