@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -26,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String PUBLISHERS_API_URL = "/api/v1/publishers/**";
     private static final String AUTHORS_API_URL = "/api/v1/authors/**";
     private static final String BOOKS_API_URL = "/api/v1/books/**";
-    private static final String H2_CONSOLE_URL = "/h2-console";
+    private static final String H2_CONSOLE_URL = "/h2-console/**";
     private static final String SWAGGER_URL = "/swagger-ui.html";
     private static final String ROLE_ADMIN = Role.ADMIN.getDescription();
     private static final String ROLE_USER = Role.USER.getDescription();
@@ -46,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private UserDetailsService userDetailsService;
     private PasswordEncoder passwordEncoder;
+    private JwtRequestFilter jwtRequestFilter;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -72,6 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity.headers().frameOptions().disable();
+
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
